@@ -1,14 +1,17 @@
-import React, { Component } from 'react'
-import MarkdownContainer from './containers/MarkdownContainer'
+import React, { Fragment } from 'react'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import Admin from './containers/Admin'
+import Viewer from './containers/Viewer'
 
-class App extends Component {
-  render () {
-    return (
-      <div className='App'>
-        <MarkdownContainer />
-      </div>
-    )
-  }
-}
+const App = () => (
+  <div className='App'>
+    <Router>
+      <Fragment>
+        <Route exact path='/' component={Viewer} />
+        <Route path='/admin' component={Admin} />
+      </Fragment>
+    </Router>
+  </div>
+)
 
 export default App
