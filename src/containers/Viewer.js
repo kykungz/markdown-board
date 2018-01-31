@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import MarkdownViewer from '../components/MarkdownViewer'
 import Loading from '../components/Loading'
 import SideBar from '../components/SideBar'
-import firebase from '../firebaseInstance'
+import firebase from '../libraries/firebaseInstance'
 import styled from 'styled-components'
 
 const MarkdownWrapper = styled.div`

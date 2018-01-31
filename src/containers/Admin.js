@@ -3,7 +3,7 @@ import MarkdownViewer from '../components/MarkdownViewer'
 import MarkdownEditor from '../components/MarkdownEditor'
 import Loading from '../components/Loading'
 import SideBar from '../components/SideBar'
-import firebase from '../firebaseInstance'
+import firebase from '../libraries/firebaseInstance'
 import styled from 'styled-components'
 import Icon from 'react-fontawesome'
 
