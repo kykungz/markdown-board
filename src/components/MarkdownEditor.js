@@ -7,10 +7,9 @@ const TextArea = styled.textarea.attrs({
   rows: '22'
 })`
   width: 100%;
-  max-width: 980px;
-  margin: auto;
-  border-radius: 4px;
   white-space: nowrap;
+  border-top: none !important;
+  border-radius: 0 0 4px 4px !important;
 `
 
 class MarkdownEditor extends React.Component {

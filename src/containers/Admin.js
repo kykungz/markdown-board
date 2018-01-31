@@ -25,6 +25,20 @@ const NavItem = styled.li.attrs({
   }
 `
 
+const Editor = styled.div`
+  max-width: 980px;
+  margin: auto;
+  border-top: none;
+`
+
+const Preview = styled.div`
+  max-width: 980px;
+  margin: auto;
+  border: thin solid lightgray;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+`
+
 const Save = styled.button`
   position: absolute;
   right: 0;
@@ -90,10 +104,14 @@ class Admin extends Component {
           </Save>
         </Nav>
         { this.state.tab === 'editor' &&
-          <MarkdownEditor onChange={this.handleChange} text={this.state.text} />
+          <Editor>
+            <MarkdownEditor onChange={this.handleChange} text={this.state.text} />
+          </Editor>
         }
         { this.state.tab === 'preview' &&
-          <MarkdownViewer text={this.state.text} />
+          <Preview>
+            <MarkdownViewer text={this.state.text} />
+          </Preview>
         }
       </div>
     )

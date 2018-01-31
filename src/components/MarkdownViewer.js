@@ -11,11 +11,7 @@ converter.setOption('openLinksInNewWindow', 'true')
 const GithubMarkdown = styled.div.attrs({
   className: 'markdown-body'
 })`
-  border: thin solid lightgray;
   width: 100%;
-  max-width: 980px;
-  margin: auto;
-  border-radius: 4px;
   padding: 40px;
 `
 
