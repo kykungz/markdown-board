@@ -3,14 +3,18 @@ import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
-const SideBarWrapper = styled.div`
+const SideBarWrapper = styled.div.attrs({
+  className: 'sidebar'
+})`
   position: fixed;
   width: 200px;
   height: 100%;
   left: 0;
   top: 0;
   padding-top: 2em;
+  overflow-x: scroll;
   background: whitesmoke;
+  transition: all 200ms;
 `
 
 const File = styled.div`

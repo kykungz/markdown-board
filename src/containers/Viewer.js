@@ -5,17 +5,15 @@ import SideBar from '../components/SideBar'
 import firebase from '../libraries/firebaseInstance'
 import styled from 'styled-components'
 
+const ViewerWrapper = styled.div.attrs({
+  className: 'page-content'
+})``
+
 const MarkdownWrapper = styled.div`
   max-width: 980px;
   margin: auto;
   border-radius: 4px;
   border: thin solid lightgray;
-`
-
-const ViewerWrapper = styled.div`
-  margin-left: 200px;
-  padding: 1em;
-  padding-top: 40px;
 `
 
 class Viewer extends Component {

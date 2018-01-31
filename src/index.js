@@ -22,6 +22,22 @@ injectGlobal`
   .hljs-pre {
     background: rgb(40, 43, 50) !important;
   }
+
+  .page-content {
+    margin-left: 200px;
+    padding: 40px 1em;
+    transition: all 200ms;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar {
+      left: -200px;
+    }
+
+    .page-content {
+      margin-left: 0;
+    }
+  }
 `
 
 ReactDOM.render(<App />, document.getElementById('root'))

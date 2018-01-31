@@ -7,6 +7,10 @@ import firebase from '../libraries/firebaseInstance'
 import styled from 'styled-components'
 import Icon from 'react-fontawesome'
 
+const AdminWrapper = styled.div.attrs({
+  className: 'page-content'
+})``
+
 const Nav = styled.ul.attrs({
   className: 'nav nav-tabs'
 })`
@@ -77,11 +81,6 @@ const Operation = styled.button`
   &:hover {
     background: whitesmoke;
   }
-`
-
-const AdminWrapper = styled.div`
-  margin-left: 200px;
-  padding: 40px 1em;
 `
 
 class Admin extends Component {
