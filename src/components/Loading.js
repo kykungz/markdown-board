@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 const CenteredReactLoading = styled(ReactLoading).attrs({
-  type: 'bars',
+  type: 'spin',
   delay: 0
 })`
   margin: auto;
