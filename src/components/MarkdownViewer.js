@@ -1,12 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import showdown from 'showdown'
-import ReactHtmlParser from 'react-html-parser'
+import markdownConverter from '../libraries/markdownConverter'
 import styled from 'styled-components'
+import { Parser } from 'html-to-react'
 
-const converter = new showdown.Converter()
-converter.setFlavor('github')
-converter.setOption('openLinksInNewWindow', 'true')
+const htmlToReactParser = new Parser()
 
 const GithubMarkdown = styled.div.attrs({
   className: 'markdown-body'
@@ -18,7 +16,7 @@ const GithubMarkdown = styled.div.attrs({
 
 const MarkdownViewer = (props) => (
   <GithubMarkdown>
-    { ReactHtmlParser(converter.makeHtml(props.text)) }
+    { htmlToReactParser.parse(markdownConverter.makeHtml(props.text)) }
   </GithubMarkdown>
 )
 
