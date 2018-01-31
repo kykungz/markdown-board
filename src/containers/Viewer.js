@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import MarkdownViewer from '../components/MarkdownViewer'
 import Loading from '../components/Loading'
+import SideBar from '../components/SideBar'
 import firebase from '../firebaseInstance'
 import styled from 'styled-components'
 
@@ -9,6 +10,12 @@ const MarkdownWrapper = styled.div`
   margin: auto;
   border-radius: 4px;
   border: thin solid lightgray;
+`
+
+const ViewerWrapper = styled.div`
+  margin-left: 200px;
+  padding: 1em;
+  padding-top: 40px;
 `
 
 class Viewer extends Component {
@@ -32,13 +39,15 @@ class Viewer extends Component {
 
   render () {
     return (
-      <div className='container-fluid mb-4'>
-        <Loading isLoading={this.state.isLoading}>
-          <h1>Viewer</h1>
-          <MarkdownWrapper>
-            <MarkdownViewer text={this.state.text} />
-          </MarkdownWrapper>
-        </Loading>
+      <div>
+        <SideBar list={['admin', 'Home', 'Software', 'Hardware']} />
+        <ViewerWrapper>
+          <Loading isLoading={this.state.isLoading}>
+            <MarkdownWrapper>
+              <MarkdownViewer text={this.state.text} />
+            </MarkdownWrapper>
+          </Loading>
+        </ViewerWrapper>
       </div>
     )
   }

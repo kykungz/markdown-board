@@ -9,7 +9,7 @@ import { injectGlobal } from 'styled-components'
 
 injectGlobal`
   body {
-    background: rgb(35, 44, 47);
+    background: #2d2d2d;
   }
 `
 

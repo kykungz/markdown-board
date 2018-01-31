@@ -2,9 +2,10 @@ import React, { Component } from 'react'
 import MarkdownViewer from '../components/MarkdownViewer'
 import MarkdownEditor from '../components/MarkdownEditor'
 import Loading from '../components/Loading'
+import SideBar from '../components/SideBar'
 import firebase from '../firebaseInstance'
 import styled from 'styled-components'
-import FontAwesome from 'react-fontawesome'
+import Icon from 'react-fontawesome'
 
 const Nav = styled.ul.attrs({
   className: 'nav nav-tabs'
@@ -26,8 +27,15 @@ const NavItem = styled.li.attrs({
   }
 `
 
-const NavLink = styled.span`
+const NavLink = styled.span.attrs({
+  className: 'nav-link '
+})`
   background: hsl(195, 14%, 30%);
+  transition: all 200ms;
+
+  &:hover {
+    background: hsl(195, 14%, 35%);
+  }
 `
 
 const Editor = styled.div`
@@ -44,33 +52,48 @@ const Preview = styled.div`
   border-radius: 0 0 4px 4px;
 `
 
-const Save = styled.button`
+const OperationMenu = styled.div`
   position: absolute;
   right: 0;
+`
+
+const Operation = styled.button`
   padding: .5em;
   cursor: pointer;
-  border-radius: 2px;
+  border-radius: 2px 2px 0 0;
   border-bottom: none;
+  width: 40px;
   transition: all 300ms;
+
+  &:disabled, &:disabled:hover {
+    background: gray;
+  }
+
+  &:focus {
+    box-shadow: none;
+    outline: none;
+  }
 
   &:hover {
     background: whitesmoke;
   }
 `
 
+const AdminWrapper = styled.div`
+  margin-left: 200px;
+  padding: 40px 1em;
+`
+
 class Admin extends Component {
   state = {
-    tab: 'editor',
+    tab: 'preview',
     text: '',
-    isLoading: true
+    isLoading: true,
+    isUploading: false
   }
 
-  componentDidMount = async () => {
-    const snapshot = await firebase.database().ref('/markdown').once('value')
-    this.setState({
-      text: snapshot.val(),
-      isLoading: false
-    })
+  componentDidMount = () => {
+    this.download()
   }
 
   componentWillUnmount = () => {
@@ -85,43 +108,76 @@ class Admin extends Component {
     this.setState({ text })
   }
 
+  download = () => {
+    this.setState({ isLoading: true }, async () => {
+      try {
+        const snapshot = await firebase.database().ref('/markdown').once('value')
+        this.setState({
+          text: snapshot.val(),
+          isLoading: false
+        })
+      } catch (e) {
+        console.log('Error:', e)
+      }
+    })
+  }
+
   upload = () => {
-    firebase.database().ref('/markdown').set(this.state.text)
+    this.setState({ isUploading: true }, async () => {
+      await firebase.database().ref('/markdown').set(this.state.text)
+      this.setState({ isUploading: false })
+    })
   }
 
   render () {
     return (
-      <div className='container-fluid mb-4'>
-        <h1>Admin</h1>
-        <Nav>
-          <NavItem onClick={() => this.updateTab('editor')}>
-            <NavLink className={`nav-link ${this.state.tab === 'editor' ? 'active' : ''}`}>
-              <FontAwesome name='code' /> Editor
-            </NavLink>
-          </NavItem>
-          <NavItem onClick={() => this.updateTab('preview')}>
-            <NavLink className={`nav-link ${this.state.tab === 'preview' ? 'active' : ''}`}>
-              <FontAwesome name='eye' /> Preview Changes
-            </NavLink>
-          </NavItem>
-          <Save onClick={this.upload}>
-            <FontAwesome size='lg' name='upload' />
-          </Save>
-        </Nav>
-        { this.state.tab === 'editor' &&
-          <Editor>
-            <Loading isLoading={this.state.isLoading}>
+      <div>
+        <SideBar list={['/', 'Software', 'Hardware']} />
+        <AdminWrapper>
+          <Nav>
+            <NavItem onClick={() => this.updateTab('preview')}>
+              <NavLink className={this.state.tab === 'preview' ? 'active' : ''}>
+                <Icon name='eye' /> Preview
+              </NavLink>
+            </NavItem>
+            <NavItem onClick={() => this.updateTab('editor')}>
+              <NavLink className={this.state.tab === 'editor' ? 'active' : ''}>
+                <Icon name='code' /> Editor
+              </NavLink>
+            </NavItem>
+            <OperationMenu>
+              <Operation onClick={this.download} disabled={this.state.isLoading}>
+                <Icon
+                  size='lg'
+                  style={{ color: '#494f55' }}
+                  name='refresh'
+                />
+              </Operation>
+              <Operation onClick={this.upload} disabled={this.state.isLoading}>
+                <Icon
+                  size='lg'
+                  style={{ color: '#494f55' }}
+                  name={this.state.isUploading ? 'spinner' : 'cloud-upload'}
+                  spin={this.state.isUploading}
+                />
+              </Operation>
+            </OperationMenu>
+          </Nav>
+          { this.state.tab === 'editor' &&
+          <Loading isLoading={this.state.isLoading}>
+            <Editor>
               <MarkdownEditor onChange={this.updateText} text={this.state.text} />
-            </Loading>
-          </Editor>
-        }
-        { this.state.tab === 'preview' &&
-          <Preview>
-            <Loading isLoading={this.state.isLoading}>
+            </Editor>
+          </Loading>
+          }
+          { this.state.tab === 'preview' &&
+          <Loading isLoading={this.state.isLoading}>
+            <Preview>
               <MarkdownViewer text={this.state.text} />
-            </Loading>
-          </Preview>
-        }
+            </Preview>
+          </Loading>
+          }
+        </AdminWrapper>
       </div>
     )
   }

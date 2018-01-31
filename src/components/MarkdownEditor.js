@@ -4,12 +4,17 @@ import styled from 'styled-components'
 
 const TextArea = styled.textarea.attrs({
   className: 'form-control',
-  rows: '22'
+  rows: '24'
 })`
   width: 100%;
   white-space: nowrap;
   border-top: none !important;
   border-radius: 0 0 4px 4px !important;
+
+  &:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
 `
 
 class MarkdownEditor extends React.Component {
