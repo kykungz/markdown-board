@@ -16,9 +16,11 @@ showdown.extension('codehighlight', function () {
             .replace(/&amp;/g, '&')
             .replace(/&lt;/g, '<')
             .replace(/&gt;/g, '>')
+          // add background to codeblock
+          left = left.replace('<pre', '<pre class="hljs-pre"')
           // add color to text
-          if (left.includes('class="')) {
-            left = left.replace('class="', 'class="hljs ')
+          if (left.includes('<code class="')) {
+            left = left.replace('<code class="', '<code class="hljs ')
             return left + highlightjs.highlightAuto(match).value + right
           } else {
             left = left.replace('<code', '<code class="hljs"')

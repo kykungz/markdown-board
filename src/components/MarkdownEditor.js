@@ -1,27 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
-
-const TextArea = styled.textarea.attrs({
-  rows: '24'
-})`
-  width: 100%;
-  white-space: nowrap;
-  border: thin solid lightgray;
-  border-top: none !important;
-  border-radius: 0 0 4px 4px !important;
-  background: url(http://i.imgur.com/2cOaJ.png);
-  background-attachment: local;
-  background-repeat: no-repeat;
-  background-color: white;
-  padding-left: 35px;
-  padding-top: 10px;
-
-  &:focus {
-    outline: none !important;
-    box-shadow: none !important;
-  }
-`
+import {Controlled as CodeMirror} from 'react-codemirror2'
+import 'codemirror/theme/material.css'
+import 'codemirror/mode/gfm/gfm.js'
 
 class MarkdownEditor extends React.Component {
   constructor (props) {
@@ -36,15 +17,24 @@ class MarkdownEditor extends React.Component {
     onChange: PropTypes.func
   }
 
-  handleChange (e) {
-    this.setState({ text: e.target.value }, () => {
+  handleChange = (editor, data, value) => {
+    this.setState({ text: value }, () => {
       this.props.onChange(this.state.text)
     })
   }
 
   render () {
     return (
-      <TextArea onChange={e => this.handleChange(e)} value={this.state.text} />
+      <CodeMirror
+        value={this.state.text}
+        options={{
+          mode: 'gfm',
+          theme: 'material',
+          lineNumbers: true,
+          tabSize: '2'
+        }}
+        onBeforeChange={this.handleChange}
+      />
     )
   }
 }
