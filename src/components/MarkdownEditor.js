@@ -3,13 +3,19 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 const TextArea = styled.textarea.attrs({
-  className: 'form-control',
   rows: '24'
 })`
   width: 100%;
   white-space: nowrap;
+  border: thin solid lightgray;
   border-top: none !important;
   border-radius: 0 0 4px 4px !important;
+  background: url(http://i.imgur.com/2cOaJ.png);
+  background-attachment: local;
+  background-repeat: no-repeat;
+  background-color: white;
+  padding-left: 35px;
+  padding-top: 10px;
 
   &:focus {
     outline: none !important;
