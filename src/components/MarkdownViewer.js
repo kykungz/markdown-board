@@ -13,6 +13,7 @@ const GithubMarkdown = styled.div.attrs({
 })`
   width: 100%;
   padding: 40px;
+  background: white;
 `
 
 const MarkdownViewer = (props) => (

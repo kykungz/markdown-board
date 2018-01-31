@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import MarkdownViewer from '../components/MarkdownViewer'
 import MarkdownEditor from '../components/MarkdownEditor'
+import Loading from '../components/Loading'
 import firebase from '../firebaseInstance'
 import styled from 'styled-components'
 import FontAwesome from 'react-fontawesome'
@@ -18,11 +19,15 @@ const NavItem = styled.li.attrs({
   className: 'nav-item'
 })`
   cursor: pointer;
-  color: gray;
+  color: lightgray;
 
   > .active {
     font-weight: 500;
   }
+`
+
+const NavLink = styled.span`
+  background: hsl(195, 14%, 30%);
 `
 
 const Editor = styled.div`
@@ -57,14 +62,14 @@ class Admin extends Component {
   state = {
     tab: 'editor',
     text: '',
-    loading: true
+    isLoading: true
   }
 
   componentDidMount = async () => {
     const snapshot = await firebase.database().ref('/markdown').once('value')
     this.setState({
       text: snapshot.val(),
-      loading: false
+      isLoading: false
     })
   }
 
@@ -72,11 +77,11 @@ class Admin extends Component {
     firebase.database().ref('/').off()
   }
 
-  handleClick = tab => {
+  updateTab = tab => {
     this.setState({ tab })
   }
 
-  handleChange = text => {
+  updateText = text => {
     this.setState({ text })
   }
 
@@ -86,18 +91,18 @@ class Admin extends Component {
 
   render () {
     return (
-      <div className='container-fluid'>
+      <div className='container-fluid mb-4'>
         <h1>Admin</h1>
         <Nav>
-          <NavItem onClick={() => this.handleClick('editor')}>
-            <span className={`nav-link ${this.state.tab === 'editor' ? 'active' : ''}`}>
+          <NavItem onClick={() => this.updateTab('editor')}>
+            <NavLink className={`nav-link ${this.state.tab === 'editor' ? 'active' : ''}`}>
               <FontAwesome name='code' /> Editor
-            </span>
+            </NavLink>
           </NavItem>
-          <NavItem onClick={() => this.handleClick('preview')}>
-            <span className={`nav-link ${this.state.tab === 'preview' ? 'active' : ''}`}>
+          <NavItem onClick={() => this.updateTab('preview')}>
+            <NavLink className={`nav-link ${this.state.tab === 'preview' ? 'active' : ''}`}>
               <FontAwesome name='eye' /> Preview Changes
-            </span>
+            </NavLink>
           </NavItem>
           <Save onClick={this.upload}>
             <FontAwesome size='lg' name='upload' />
@@ -105,12 +110,16 @@ class Admin extends Component {
         </Nav>
         { this.state.tab === 'editor' &&
           <Editor>
-            <MarkdownEditor onChange={this.handleChange} text={this.state.text} />
+            <Loading isLoading={this.state.isLoading}>
+              <MarkdownEditor onChange={this.updateText} text={this.state.text} />
+            </Loading>
           </Editor>
         }
         { this.state.tab === 'preview' &&
           <Preview>
-            <MarkdownViewer text={this.state.text} />
+            <Loading isLoading={this.state.isLoading}>
+              <MarkdownViewer text={this.state.text} />
+            </Loading>
           </Preview>
         }
       </div>
