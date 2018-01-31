@@ -36,12 +36,6 @@ class MarkdownEditor extends React.Component {
     onChange: PropTypes.func
   }
 
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.text !== this.state.text) {
-      this.setState({ text: nextProps.text })
-    }
-  }
-
   handleChange (e) {
     this.setState({ text: e.target.value }, () => {
       this.props.onChange(this.state.text)
