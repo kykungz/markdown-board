@@ -107,6 +107,14 @@ class Admin extends Component {
     this.setState({ text })
   }
 
+  handleKeyDown = (e) => {
+    // SAVE shortcut ( CTRL-S or CMD-S )
+    if ((e.metaKey || e.ctrlKey) && e.keyCode === 83) {
+      e.preventDefault()
+      this.upload()
+    }
+  }
+
   download = () => {
     this.setState({ isLoading: true }, async () => {
       try {
@@ -164,7 +172,7 @@ class Admin extends Component {
           </Nav>
           { this.state.tab === 'editor' &&
           <Loading isLoading={this.state.isLoading}>
-            <Editor>
+            <Editor onKeyDown={e => this.handleKeyDown(e)}>
               <MarkdownEditor onChange={this.updateText} text={this.state.text} />
             </Editor>
           </Loading>
