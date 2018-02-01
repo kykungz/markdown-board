@@ -1,0 +1,6 @@
+{
+  "rules": {
+    ".read": "true",
+    ".write": "auth.token.email == 'jackykongpon@gmail.com'"
+  }
+}
