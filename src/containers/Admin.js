@@ -92,11 +92,25 @@ class Admin extends Component {
   }
 
   componentDidMount = () => {
-    this.download()
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        // User is signed in. Test for user permission.
+        firebase.database().ref('_auth').set(true)
+          .then(() => {
+            this.download()
+          })
+          .catch(err => {
+            console.log(err)
+            firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())
+          })
+      } else {
+        firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())
+      }
+    })
   }
 
   componentWillUnmount = () => {
-    firebase.database().ref('/').off()
+    firebase.database().ref().off()
   }
 
   updateTab = tab => {
@@ -163,18 +177,18 @@ class Admin extends Component {
             </OperationMenu>
           </Nav>
           { this.state.tab === 'editor' &&
-          <Loading isLoading={this.state.isLoading}>
-            <Editor>
-              <MarkdownEditor onChange={this.updateText} text={this.state.text} />
-            </Editor>
-          </Loading>
+            <Loading isLoading={this.state.isLoading}>
+              <Editor>
+                <MarkdownEditor onChange={this.updateText} text={this.state.text} />
+              </Editor>
+            </Loading>
           }
           { this.state.tab === 'preview' &&
-          <Loading isLoading={this.state.isLoading}>
-            <Preview>
-              <MarkdownViewer text={this.state.text} />
-            </Preview>
-          </Loading>
+            <Loading isLoading={this.state.isLoading}>
+              <Preview>
+                <MarkdownViewer text={this.state.text} />
+              </Preview>
+            </Loading>
           }
         </AdminWrapper>
       </div>
