@@ -92,17 +92,15 @@ class Admin extends Component {
   }
 
   componentDidMount = () => {
-    firebase.auth().onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged(async user => {
       if (user) {
         // User is signed in. Test for user permission.
-        firebase.database().ref('_auth').set(true)
-          .then(() => {
-            this.download()
-          })
-          .catch(err => {
-            console.log(err)
-            firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())
-          })
+        try {
+          await firebase.database().ref('_auth').set(true)
+          this.download()
+        } catch (e) {
+          firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())
+        }
       } else {
         firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())
       }
