@@ -92,11 +92,23 @@ class Admin extends Component {
   }
 
   componentDidMount = () => {
-    this.download()
+    firebase.auth().onAuthStateChanged(async user => {
+      if (user) {
+        // User is signed in. Test for user permission.
+        try {
+          await firebase.database().ref('_auth').set(true)
+          this.download()
+        } catch (e) {
+          firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())
+        }
+      } else {
+        firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())
+      }
+    })
   }
 
   componentWillUnmount = () => {
-    firebase.database().ref('/').off()
+    firebase.database().ref().off()
   }
 
   updateTab = tab => {
@@ -178,11 +190,11 @@ class Admin extends Component {
           </Loading>
           }
           { this.state.tab === 'preview' &&
-          <Loading isLoading={this.state.isLoading}>
-            <Preview>
-              <MarkdownViewer text={this.state.text} />
-            </Preview>
-          </Loading>
+            <Loading isLoading={this.state.isLoading}>
+              <Preview>
+                <MarkdownViewer text={this.state.text} />
+              </Preview>
+            </Loading>
           }
         </AdminWrapper>
       </div>
