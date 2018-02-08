@@ -25,7 +25,6 @@ injectGlobal`
 
   .page-content {
     margin-left: 200px;
-    padding: 40px 1em;
     transition: all 200ms;
   }
 

@@ -4,12 +4,15 @@ import MarkdownEditor from '../components/MarkdownEditor'
 import Loading from '../components/Loading'
 import SideBar from '../components/SideBar'
 import firebase from '../libraries/firebaseInstance'
+import { Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 import Icon from 'react-fontawesome'
 
 const AdminWrapper = styled.div.attrs({
   className: 'page-content'
-})``
+})`
+  padding: 10px 1em;
+`
 
 const Nav = styled.ul.attrs({
   className: 'nav nav-tabs'
@@ -83,26 +86,49 @@ const Operation = styled.button`
   }
 `
 
+const Logout = styled.span`
+  cursor: pointer;
+  text-decoration: underline;
+  transition: all 200ms;
+
+  &:hover {
+    color: gray;
+  }
+`
+
 class Admin extends Component {
   state = {
-    tab: 'preview',
+    tab: 'preview', // preview || editor
     text: '',
     isLoading: true,
-    isUploading: false
+    isUploading: false,
+    redirect: false,
+    toast: null,
+    signOut: false
   }
 
   componentDidMount = () => {
-    firebase.auth().onAuthStateChanged(async user => {
+    const unsubscribe = firebase.auth().onAuthStateChanged(async user => {
       if (user) {
-        // User is signed in. Test for user permission.
+        // User is signed in.
         try {
+          // Test for user permission.
           await firebase.database().ref('_auth').set(true)
           this.download()
         } catch (e) {
-          firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())
+          // No permission
+          unsubscribe()
+          console.log('brfore signout: ', firebase.auth().currentUser)
+          await firebase.auth().signOut()
+          this.setState({ redirect: true, toast: 'Permission Denied' })
         }
       } else {
-        firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())
+        // User is not signed in.
+        unsubscribe()
+        // Did not intentionally sign out
+        if (!this.state.signOut) {
+          firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())
+        }
       }
     })
   }
@@ -127,6 +153,13 @@ class Admin extends Component {
     }
   }
 
+  signOut = () => {
+    this.setState({ signOut: true }, async () => {
+      await firebase.auth().signOut()
+      this.setState({ redirect: true })
+    })
+  }
+
   download = () => {
     this.setState({ isLoading: true }, async () => {
       try {
@@ -149,8 +182,22 @@ class Admin extends Component {
   }
 
   render () {
+    if (this.state.redirect) {
+      return (
+        <Redirect push to={{
+          pathname: '/',
+          state: { toast: this.state.toast }
+        }} />
+      )
+    }
+
     return (
-      <div>
+      <Loading isLoading={this.state.isLoading}>
+        <div className='text-right text-white pt-2 pr-3'>
+          <Logout onClick={this.signOut}>
+            Logout
+          </Logout>
+        </div>
         <SideBar list={['/', 'Software', 'Hardware']} />
         <AdminWrapper>
           <Nav>
@@ -182,22 +229,17 @@ class Admin extends Component {
               </Operation>
             </OperationMenu>
           </Nav>
-          { this.state.tab === 'editor' &&
-          <Loading isLoading={this.state.isLoading}>
+          { this.state.tab === 'editor' ? (
             <Editor onKeyDown={e => this.handleKeyDown(e)}>
               <MarkdownEditor onChange={this.updateText} text={this.state.text} />
             </Editor>
-          </Loading>
-          }
-          { this.state.tab === 'preview' &&
-            <Loading isLoading={this.state.isLoading}>
-              <Preview>
-                <MarkdownViewer text={this.state.text} />
-              </Preview>
-            </Loading>
-          }
+          ) : (
+            <Preview>
+              <MarkdownViewer text={this.state.text} />
+            </Preview>
+          ) }
         </AdminWrapper>
-      </div>
+      </Loading>
     )
   }
 }
